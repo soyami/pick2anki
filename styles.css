@@ -1,0 +1,273 @@
+/* ======== 快翻译弹窗（对齐 Obsidian 原生 Popover 风格） ======== */
+
+.kfy-popup {
+  z-index: var(--layer-popover, 20);
+  position: absolute;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
+  padding: var(--size-4-3) var(--size-4-4);
+  /* 宽度黄金比例默认，高度不限制（内容自适应），由 JS 保证不越出界面 */
+  width: min(460px, 90vw);
+  height: auto;
+  overflow: auto;
+  resize: both;
+  font-size: var(--font-ui-small);
+  font-family: var(--font-interface);
+  color: var(--text-normal);
+}
+
+.kfy-section {
+  margin-bottom: var(--size-4-3);
+}
+.kfy-section:last-child {
+  margin-bottom: 0;
+}
+
+/* 标签：对齐 Obsidian setting-item-description 的小号弱化文字 */
+.kfy-label {
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+  margin-bottom: var(--size-4-1);
+  user-select: none;
+}
+
+/* 标签行 */
+.kfy-section-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--size-4-1);
+}
+.kfy-section-hdr .kfy-label {
+  margin-bottom: 0;
+}
+
+.kfy-drag-handle {
+  cursor: grab;
+}
+.kfy-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* 内容块：词典释义展示，超长限高滚动避免弹窗抖动 */
+.kfy-text {
+  font-size: var(--font-ui-small);
+  line-height: var(--line-height-normal);
+  color: var(--text-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: var(--size-4-2) var(--size-4-3);
+  background: var(--background-secondary);
+  border-radius: var(--radius-s);
+  max-height: 60vh;
+  overflow-y: auto;
+  /* 允许常规文本选取 */
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+/* 按钮行 */
+.kfy-btn-row {
+  display: flex;
+  gap: var(--size-4-2);
+  justify-content: flex-end;
+  margin-top: var(--size-4-2);
+  align-items: center;
+}
+
+.kfy-btn-row button {
+  padding: var(--size-4-1) var(--size-4-3);
+  border: none;
+  border-radius: var(--radius-s);
+  background: var(--interactive-normal);
+  box-shadow: var(--input-shadow);
+  color: var(--text-normal);
+  cursor: pointer;
+  font-size: var(--font-ui-smaller);
+  font-family: var(--font-interface);
+  transition: background-color 0.15s ease;
+}
+
+.kfy-btn-row button:hover {
+  background: var(--interactive-hover);
+}
+
+.kfy-btn-row button:active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+/* Anki 写卡按钮：主题色弱化强调 */
+.kfy-btn-row button.kfy-anki {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+.kfy-btn-row button.kfy-anki:hover {
+  filter: brightness(1.08);
+}
+
+/* 写卡后的动态状态：成功 ✔ / 已存在 ↺ / 失败或进行中 ➕(禁用) */
+.kfy-btn-row button.kfy-anki.kfy-anki-ok {
+  background: var(--color-green, #2e9e5b);
+  color: #fff;
+}
+.kfy-btn-row button.kfy-anki.kfy-anki-dup {
+  background: var(--color-orange, #d99000);
+  color: #fff;
+}
+.kfy-btn-row button.kfy-anki.kfy-anki-err {
+  background: var(--interactive-normal);
+  color: var(--text-normal);
+}
+.kfy-btn-row button.kfy-anki[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ======== 词典源拖动排序列表（设置页） ======== */
+.kfy-src-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: var(--size-4-2) 0;
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background: var(--background-secondary);
+}
+
+.kfy-src-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+  padding: var(--size-4-2) var(--size-4-3);
+  background: var(--background-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  user-select: none;
+}
+
+.kfy-src-grip {
+  color: var(--text-faint);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.kfy-src-name {
+  flex: 1;
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+
+.kfy-src-row.kfy-src-dragging {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.kfy-src-row.kfy-src-drag-over {
+  border-color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+
+/* ======== 词典释义卡片（参照 demo.css 柯林斯卡片样板） ======== */
+.kfy-text b {
+  font-weight: 700;
+}
+
+.kfy-dict-src + .kfy-dict-src {
+  border-top: 1px solid var(--background-modifier-border);
+  margin-top: 8px;
+  padding-top: 6px;
+}
+
+.kfy-dict-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.kfy-src-badge {
+  font-weight: 600;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-accent);
+}
+
+.kfy-src-url {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  word-break: break-all;
+}
+
+.kfy-phon {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  margin: 2px 0 6px;
+}
+
+.kfy-def {
+  display: block;
+  margin: 4px 0;
+  line-height: 1.55;
+}
+
+/* 词性：蓝色小徽章（小写英文标签，如 noun / adj.） */
+.kfy-pos {
+  display: inline-block;
+  text-transform: lowercase;
+  font-size: 0.9em;
+  margin-right: 6px;
+  padding: 1px 5px;
+  color: #fff;
+  background-color: #0d47a1;
+  border-radius: 3px;
+  vertical-align: baseline;
+}
+
+.kfy-eng-tran {
+  margin-right: 4px;
+}
+
+.kfy-chn-tran {
+  color: #0d47a1;
+}
+
+/* 例句：浅蓝底方块列表，紧跟对应释义 */
+.kfy-sents {
+  list-style: square inside;
+  font-size: 0.9em;
+  margin: 4px 0 6px;
+  padding: 4px 8px;
+  background: rgba(13, 71, 161, 0.1);
+  border-radius: 5px;
+}
+
+.kfy-sent {
+  margin: 2px 0;
+  padding: 0;
+}
+
+.kfy-eng-sent {
+  margin-right: 4px;
+}
+
+.kfy-chn-sent {
+  color: #0d47a1;
+}
+
+.kfy-more {
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  margin-top: 4px;
+}
+
+.kfy-extra {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-top: 2px;
+}
