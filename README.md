@@ -25,7 +25,7 @@ Pick2anki 为一条工作流设计：**在 Obsidian 里读英文资料 → 遇�
 ## 安装
 
 1. 从 Releases 下载 `main.js`、`manifest.json`、`styles.css`
-2. 放入 `<vault>/.obsidian/plugins/pick2anki/`
+2. 放入 `<vault>/.obsidian/plugins/pick-to-anki/`
 3. 重启 Obsidian → 设置 → 第三方插件 → 启用 Pick2anki
 
 ## 使用
