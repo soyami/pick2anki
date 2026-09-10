@@ -3,7 +3,7 @@
   "name": "Pick2anki",
   "version": "1.0.0",
   "minAppVersion": "1.1.0",
-  "description": "划词即查：在线多源词典(有道/柯林斯英汉双解/牛津)聚合释义与音标，一键(或自动)通过 AnkiConnect 写入 Anki 指定牌组/模板，支持自定义字段映射与发音音频。",
+  "description": "划词即查：在线多源词典(有道/柯林斯英汉双解/牛津)聚合释义与音标，一键(或自动)通过 AnkiConnect 写入 Anki 指定牌组/模板，支持自定义字段映射与发音音频。"
   "author": "soyami",
   "authorUrl": "https://github.com/soyami",
   "isDesktopOnly": true
