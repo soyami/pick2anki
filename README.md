@@ -2,6 +2,8 @@
 
 > Obsidian 划词词典插件：选中英文单词/短语 → 多源在线词典聚合释义 → 一键写入 Anki 生词卡。无需任何 AI / 翻译 API Key。
 
+> *An Obsidian plugin: highlight a word or phrase to get aggregated definitions from five online dictionaries, then save it as an Anki card in one click. Full English documentation is at the bottom of this page.*
+
 Pick2anki 为一条工作流设计：在 Obsidian 里读英文资料 → 遇到生词划一下 → 释义进卡片 → 碎片时间用 Anki 复习。查词与制卡都在当前笔记的上下文里完成，原句随词一起进卡。
 
 ---
@@ -32,7 +34,7 @@ Pick2anki 为一条工作流设计：在 Obsidian 里读英文资料 → 遇到�
 
 在笔记中划选英文单词/短语，弹窗显示多源聚合释义。默认直接划选触发；可在设置中改为 `Ctrl+划选` 触发，或调整防抖时间。
 
-设置 →「在线词典」可调整词典顺序与启停，点"试查"验证网络连通。
+设置 →「在线词典」可调整词典顺序与启停，点“试查”验证网络连通。
 
 > 注意：柯林斯/牛津/剑桥等官网存在反爬或改版，失败时插件会自动跳过该源并继续其它源。有道、必应最稳定，普通词建议以有道为主（含柯林斯英汉双解授权数据），生僻/技术词有道覆盖也最广。
 
@@ -143,3 +145,148 @@ MIT © soyami
 
 - `edge-tts.ts` 与部分样式改编自 [wjzixi/kuaifanyi](https://github.com/wjzixi/kuaifanyi)（MIT，Copyright © 2026 BOSS）
 - 交互与界面设计参考 [ninja33/ODH (Online Dictionary Helper)](https://github.com/ninja33/ODH)（MIT，Copyright (c) 2018 Zhenyu Huang）
+
+---
+
+<details>
+<summary>English documentation</summary>
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Multi-source dictionary lookup** | Highlighting an English word or phrase pops up aggregated definitions from five built-in sources: Youdao (including licensed Collins English–Chinese data), Collins English–Chinese, Oxford Advanced Learner's Dictionary, Bing, and Cambridge. Sources can be reordered or disabled; the popup fully expands only the top two available sources to avoid clutter. |
+| **One-click Anki cards** | Connects to your local Anki through AnkiConnect (default `127.0.0.1:8765`), no extra plugin needed. Cards go to the deck and note type you choose, with live feedback on the popup button: writing → saved / duplicate. |
+| **Built-in recommended template** | Ships with an Anki note type whose fields map one-to-one to the plugin's content types. Create it with one click (via AnkiConnect `createModel`), or import the bundled `.apkg`. |
+| **Field mapping (fixed content → your template)** | The plugin provides nine fixed content types: word/phrase, source sentence, phonetics, single definition, all definitions, examples, extra info, audio file, and source links. After reading your note type's fields, map each content type to a field with a dropdown. Leave one empty to skip it; several content types may share one field (they are merged). |
+| **Pronunciation** | Dictionary audio first (UK/US), with Edge TTS as a fallback; audio is stored in the Anki media library (`[sound:…]`) and plays offline. |
+| **Context and sources** | The sentence containing the word is captured from the current note automatically, and matched dictionary links plus the note link are written to the source field. |
+| **Lightweight** | No AI or long-text translation, no cache, no external services, no API keys. |
+
+> Only English words and phrases are processed: Chinese text, long passages, or selections longer than five words / 60 characters do not trigger a lookup.
+
+## Installation
+
+1. Download `main.js`, `manifest.json`, and `styles.css` from Releases.
+2. Place them in `<vault>/.obsidian/plugins/pick-to-anki/`.
+3. Restart Obsidian → Settings → Community plugins → enable Pick2anki.
+
+## Usage
+
+### 1. Look up words
+
+Highlight an English word or phrase in a note to see aggregated definitions in a popup. Selection triggers a lookup directly by default; you can switch to `Ctrl` + selection or adjust the debounce delay in settings.
+
+Settings → "Online dictionaries" lets you reorder sources and enable or disable them; use "Test lookup" to verify connectivity.
+
+> Note: sites such as Collins, Oxford, and Cambridge occasionally add anti-bot measures or change their markup. When a source fails, the plugin skips it and continues with the others. Youdao and Bing are the most stable; Youdao is a good default for everyday words (it includes licensed Collins English–Chinese data) and also has the widest coverage of rare or technical terms.
+
+### 2. Save to Anki
+
+Requires the desktop version of Anki with the AnkiConnect add-on (Anki → Tools → Add-ons → Get add-ons, code `2055492159`).
+
+Settings → "Anki":
+
+1. Enable the switch → "Test connection" to load decks and note types.
+2. Click "Create recommended template" to generate the bundled note type (see below). You can also skip this and use your own template.
+3. Choose the target deck (use `::` for sub-decks) and note type; its fields are loaded automatically.
+4. Field mapping: point each content type at a field of your template (for example `word → Word`, `source sentence → Context`, `phonetics → Phonetic`, `all definitions → AllDefs`, `audio → Audio`, `source links → Source`). Empty means skipped. Defaults are applied automatically after the recommended template is created.
+5. Optional: enable "Add card automatically after lookup", duplicate handling (skip / add anyway), duplicate scope (deck / whole note type), and card tags.
+
+Then highlight a word and click "Add to Anki" in the popup, or run "Add selection to Anki" from the command palette.
+
+### 3. Recommended Anki template
+
+Two ways to get it — pick either:
+
+- **One-click creation** (recommended): Settings → "Anki" → "Create recommended template". The plugin creates the note type inside your Anki through AnkiConnect, with no file to download.
+- **Manual import**: download `assets/Pick2anki-Anki模板.apkg` and double-click it to import (it contains one sample card that you can delete).
+
+The recommended note type is called **Pick2anki** and its nine fields map one-to-one to the plugin's nine content types:
+
+- `Word` — the word or phrase (large text on the front)
+- `Context` — the source sentence (quoted on the front)
+- `Phonetic` — phonetics, next to the audio button
+- `AllDefs` — all definitions (main area of the back)
+- `SingleDef` — a single concise definition (fallback area)
+- `Examples` — example sentences
+- `Extra` — word forms, collocations, exam tags
+- `Audio` — audio file (stored in the Anki media library)
+- `Source` — dictionary and note links (small text, bottom right)
+
+Two rules of thumb:
+
+1. Use either `SingleDef` or `AllDefs`, not both: the template shows `AllDefs` when it has content and falls back to `SingleDef` when it is empty. The default is to map "all definitions → AllDefs"; if you prefer shorter cards, map only "single definition → SingleDef".
+2. Empty means skipped: leave "source links" unmapped if you do not want links on the card — no template change needed.
+
+> Note: AnkiConnect can only create note types, not overwrite them. If a note type named `Pick2anki` already exists, creation is skipped (the plugin tells you and applies the field mapping anyway). Delete the old note type in Anki first if you want the new one.
+
+## Architecture (for developers)
+
+The lookup layer follows an adapter pattern, one file per dictionary source:
+
+```
+src/
+├── main.ts              # plugin entry, commands, selection/popup
+├── settings.ts          # settings, dictionary source and content type constants
+├── dict-types.ts        # shared contract: DictResult / DictDefinition / DictAdapter
+├── online-dict.ts       # adapter registry: concurrent lookup, aggregation, rendering, Anki field extraction
+├── youdao-dict.ts       # Youdao (includes collins_primary EN–CN parsing)
+├── collins-dict.ts      # Collins English–Chinese website
+├── oxford-dict.ts       # Oxford Advanced Learner's Dictionary
+├── bing-dict.ts         # Bing dictionary (EN–CN)
+├── cambridge-dict.ts    # Cambridge Dictionary
+├── edge-tts.ts          # Edge TTS audio fallback
+├── anki.ts              # AnkiConnect client: decks, fields, media upload, card creation
+├── dict-html.ts / dict-render.ts / dict-utils.ts
+└── ...
+```
+
+Every source returns the same structure (see `src/dict-types.ts`); rendering, card creation, and ordering depend only on that contract:
+
+```ts
+interface DictDefinition {
+  pos?: string; meaning: string; zh?: string;
+  example?: string; exampleZh?: string;
+}
+interface DictResult {
+  word: string; phonetic?: string;
+  audioUrl?: string | { uk?: string; us?: string };
+  definitions: DictDefinition[];      // at least one, otherwise the adapter returns null and the next source is tried
+  examples?: { en: string; zh?: string }[];
+  source: string; sourceUrl?: string;
+  extras?: string[]; raw?: unknown;
+}
+```
+
+**Adding a new dictionary source**: implement a `DictAdapter` (`lookup()` fetches and returns a `DictResult`; return `null` when not found or on failure), append it to `DICT_ADAPTERS` in `online-dict.ts`, and it shows up in settings automatically:
+
+```ts
+import type { DictAdapter } from "./dict-types";
+export const myAdapter: DictAdapter = {
+  id: "mySource", name: "My Dictionary",
+  sourceUrlFor: (w) => `https://example.com/${w}`,
+  async lookup(word) { /* fetch → DictResult; return null on failure */ },
+};
+```
+
+## Development
+
+```bash
+npm install          # install dependencies
+npm run build        # type-check with tsc + bundle with esbuild → main.js
+npx eslint src       # lint
+```
+
+Tech stack: TypeScript · esbuild · Obsidian API (`requestUrl` / DOM) · AnkiConnect (JSON-RPC over HTTP) · Edge TTS (WebSocket)
+
+## License
+
+MIT © soyami
+
+Credits:
+
+- `edge-tts.ts` and parts of the stylesheet are adapted from [wjzixi/kuaifanyi](https://github.com/wjzixi/kuaifanyi) (MIT, Copyright © 2026 BOSS).
+- Interaction and UI design are inspired by [ninja33/ODH (Online Dictionary Helper)](https://github.com/ninja33/ODH) (MIT，Copyright (c) 2018 Zhenyu Huang).
+
+</details>
