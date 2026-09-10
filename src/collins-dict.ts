@@ -1,4 +1,4 @@
-// ============ 适配器：柯林斯英汉双解官网（HTML 尽力解析；常被 Cloudflare 拦截） ============
+// ============ 适配器：柯林斯英汉双解官网（HTML 尽力解析） ============
 import type { DictAdapter, DictDefinition, DictResult } from "./dict-types";
 import { ONLINE_DICT_NAMES } from "./settings";
 import { absUrl, clean, fetchText, friendlyPos, parseHtml, parseLabeledPhon, phonText, slugify } from "./dict-utils";
@@ -14,7 +14,7 @@ export const collinsAdapter: DictAdapter = {
       const html = await fetchText(entryUrl(word));
       return parseToDict(word, html);
     } catch (e) {
-      console.warn("[pick2anki] 柯林斯官网查询失败（常被反爬拦截），词条:", word, e instanceof Error ? e.message : String(e));
+      console.warn("[pick2anki] 柯林斯官网查询失败，词条:", word, e instanceof Error ? e.message : String(e));
       return null;
     }
   },

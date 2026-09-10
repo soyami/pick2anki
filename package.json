@@ -1,6 +1,6 @@
 {
   "name": "obsidian-pick2anki",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "description": "Obsidian 划词词典插件：在线词典查词 + AnkiConnect 单词卡写入",
   "main": "main.js",
   "scripts": {

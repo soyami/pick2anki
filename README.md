@@ -4,28 +4,31 @@
 
 Pick2anki 为一条工作流设计：**在 Obsidian 里读英文资料 → 遇到生词划一下 → 释义进卡片 → 碎片时间用 Anki 复习**。查词与制卡都在当前笔记的上下文里完成，原句随词一起进卡。
 
+![image-20260910091039957](./assets/image-20260910091039957.png)
+
 ---
 
-## ✨ 功能
+
+
+## 功能
 
 | 功能 | 说明 |
 |------|------|
-| 📖 **多源词典聚合** | 划选英文单词/短语即弹出聚合释义，内置 5 个词典源：**有道（含柯林斯英汉双解授权数据）、柯林斯英汉双解官网、牛津高阶学习者词典、必应（英汉）、剑桥**。源可启停、可排序；弹窗只完整展开排在最前且可用的 2 个源，避免刷屏 |
-| 🗂 **Anki 一键写卡** | 通过 **AnkiConnect** 直连本地 Anki（默认 `127.0.0.1:8765`），无需额外插件。写入指定牌组与笔记类型，弹窗按钮实时反馈：写入中 ⏳ → 成功 ✔ / 已存在 ↺ |
+| 📖 **多源词典** | 划选英文单词/短语即弹出聚合释义，内置 5 个词典源：**有道（含柯林斯英汉双解授权数据）、柯林斯英汉双解官网、牛津高阶学习者词典、必应（英汉）、剑桥**。可启停、可排序；弹窗只完整展开排在最前且可用的 2 个源 |
+| 🗂 **Anki 一键写卡** | 通过 **AnkiConnect** 直连本地 Anki（默认 `127.0.0.1:8765`），无需额外插件。写入指定牌组与笔记类型。 |
 | 🧩 **字段映射（固定内容 → 你的模板）** | 插件固定提供 9 种内容：`单词/词组、原句笔记、发音音标、单一释义、全部释义、例句、额外信息、音频文件、来源地址`。读取你笔记类型的字段后，用下拉把每个内容指到你模板的字段；留空 = 不写入。同一字段被多个内容指向时自动合并 |
 | 🔊 **发音** | 词典真人发音优先（英/美），失败自动用 **Edge TTS** 合成；音频经 AnkiConnect 存入 Anki 媒体库（`[sound:…]`），离线可播 |
-| 📎 **语境与来源** | 自动截取当前笔记中含该词的原句；来源字段写入命中的词典链接与笔记链接，可溯源 |
-| ⚡ **轻量精简** | 无 AI / 长句翻译依赖、无缓存、无外部服务、无任何 API Key |
+| 📎 **语境与来源** | 自动截取当前笔记中含该词的原句；来源字段写入命中的词典链接与笔记链接 |
 
 > 只处理英文单词/短语：中文、整段文字、超过 5 个词或 60 字符的选区不会触发查词。
 
-## 📦 安装
+## 安装
 
 1. 从 Releases 下载 `main.js`、`manifest.json`、`styles.css`
 2. 放入 `<vault>/.obsidian/plugins/pick2anki/`
 3. 重启 Obsidian → 设置 → 第三方插件 → 启用 Pick2anki
 
-## ⚙️ 使用
+## 使用
 
 ### 1. 划词查词
 
@@ -47,7 +50,7 @@ Pick2anki 为一条工作流设计：**在 Obsidian 里读英文资料 → 遇�
 
 之后划词查词 → 弹窗点 **➕ Anki**（或命令面板执行「将选中文本加入 Anki」）。
 
-## 🧠 架构（给开发者）
+## 架构
 
 查词层按**适配器模式**拆分，一个词典源一个文件：
 
@@ -62,7 +65,7 @@ src/
 ├── oxford-dict.ts       # 牛津高阶学习者词典（英英）
 ├── bing-dict.ts         # 必应词典（英汉）
 ├── cambridge-dict.ts    # 剑桥词典
-├── edge-tts.ts          # Edge TTS 合成兜底发音
+├── edge-tts.ts          # Edge TTS 合成发音
 ├── anki.ts              # AnkiConnect 客户端：牌组/字段读取、音频上传、写卡
 ├── dict-html.ts / dict-render.ts / dict-utils.ts
 └── ...
@@ -78,7 +81,7 @@ interface DictDefinition {
 interface DictResult {
   word: string; phonetic?: string;
   audioUrl?: string | { uk?: string; us?: string };
-  definitions: DictDefinition[];      // 至少一条，否则适配器返回 null 走兜底
+  definitions: DictDefinition[];      // 至少一条，否则适配器返回 null 走合成
   examples?: { en: string; zh?: string }[];
   source: string; sourceUrl?: string;
   extras?: string[]; raw?: unknown;
@@ -96,7 +99,7 @@ export const myAdapter: DictAdapter = {
 };
 ```
 
-## 🛠 开发
+##  开发
 
 ```bash
 npm install          # 安装依赖
@@ -112,4 +115,4 @@ MIT © soyami
 
 致谢：
 - `edge-tts.ts` 与部分样式改编自 [wjzixi/kuaifanyi](https://github.com/wjzixi/kuaifanyi)（MIT，Copyright © 2026 BOSS）
-- 交互与界面设计参考 [ninja33/ODH (Online Dictionary Helper)](https://github.com/ninja33/ODH)（MIT）
+- 交互与界面设计参考 [ninja33/ODH (Online Dictionary Helper)](https://github.com/ninja33/ODH)（MIT，Copyright (c) 2018 Zhenyu Huang）

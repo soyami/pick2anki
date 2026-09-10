@@ -7,7 +7,7 @@ export function clean(s: unknown): string {
   return typeof s === "string" ? s.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim() : "";
 }
 
-/** 数组/字符串统一取值（数组元素去空白后拼接） */
+/** 数组/字符串统一取值 */
 export function strOf(v: unknown): string {
   if (typeof v === "string") return v.trim();
   if (Array.isArray(v)) return v.map((x) => clean(x)).filter(Boolean).join(" ");

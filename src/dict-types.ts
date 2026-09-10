@@ -1,7 +1,7 @@
 // ============ 词典适配器统一规范（所有源都必须输出此结构） ============
 // 一个源 = 一个独立脚本（adapter）：只负责“抓取/解析该源原始数据 → 转成下面的统一结构”。
 // 渲染、写卡、排序、设置一律只依赖本文件里的规范类型。
-// 任何第三方爬虫/解析器只要产出该结构（definition 至少一条，否则返回 null 走兜底）即可无缝接入。
+// 任何第三方爬虫/解析器只要产出该结构（definition 至少一条，否则返回 null ）即可无缝接入。
 import type { OnlineDictSource } from "./settings";
 
 /** 词典源 id（与设置中的可选源一致） */
@@ -27,7 +27,7 @@ export interface DictResult {
   word: string;                     // 必有：查词原词（大小写/短语原样保留）
   phonetic?: string;                // 可选：音标（可为 "UK /…/ US /…/" 形式）
   audioUrl?: DictAudioUrl;          // 可选：发音直链（mp3）
-  definitions: DictDefinition[];    // 必有：至少一条，否则适配器应返回 null（走兜底/跳过）
+  definitions: DictDefinition[];    // 必有：至少一条，否则适配器应返回 null
   examples?: DictExample[];         // 可选：额外例句
   source: string;                   // 必有：来源名，如 "有道柯林斯" / "牛津高阶"
   sourceUrl?: string;               // 可选：词条页链接，可溯源

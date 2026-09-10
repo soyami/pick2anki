@@ -1,8 +1,7 @@
 // ============ Edge TTS（微软大声朗读通道） ============
-// 免费神经语音，无需 key；用于火山大模型不支持的语言（日/韩/俄）
 // 协议逐字节对齐 edge-tts 7.2.7（已实测日/韩/俄合成成功）：
 // - Sec-MS-GEC 鉴权（Windows ticks 300s 对齐 + SHA256）
-// - 请求头：Edge UA + chrome-extension Origin + MUID cookie（缺一则握手 403）
+// - 请求头：Edge UA + chrome-extension Origin + MUID cookie（缺一则 403）
 // - X-Timestamp 用 JS 风格日期，SSML 消息的时间戳尾部追加 Z（微软服务端怪癖）
 import crypto from "crypto";
 import WebSocket from "ws";
@@ -34,12 +33,12 @@ function secMsGec(): string {
   return crypto.createHash("sha256").update(`${ticks.toFixed(0)}${TRUSTED_CLIENT_TOKEN}`, "ascii").digest("hex").toUpperCase();
 }
 
-/** uuid4().hex 风格小写 32 位（服务端对大小写敏感） */
+/** uuid4().hex 风格小写 32 位 */
 function connectId(): string {
   return crypto.randomBytes(16).toString("hex");
 }
 
-/** JS Date#toString 风格 UTC 时间串（服务端严格校验格式） */
+/** JS Date#toString 风格 UTC 时间串 */
 function jsDateUtc(): string {
   const d = new Date();
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

@@ -47,7 +47,7 @@ function parseToDict(word: string, html: string, url: string): DictResult | null
     if (/uk/i.test(cls)) { ukPron = ukPron || txt; ukAudio = ukAudio || au; }
     else if (/us|ame|n_am/i.test(cls)) { usPron = usPron || txt; usAudio = usAudio || au; }
   }
-  // 音标兜底：页面所有 data-src-mp3（缺文案时仅提供发音）
+  // 页面所有 data-src-mp3（缺文案时仅提供发音）
   let phonetic = ukPron || usPron ? joinPhonetic(ukPron, usPron) : undefined;
   let audioUrl: DictResult["audioUrl"] = ukAudio || usAudio ? { uk: ukAudio || undefined, us: usAudio || undefined } : undefined;
   if (!phonetic && !audioUrl) {
@@ -78,7 +78,7 @@ function parseToDict(word: string, html: string, url: string): DictResult | null
     defs.push(d);
   }
   if (defs.length === 0) {
-    // 兜底：直接收 .def
+    // 直接收 .def
     for (const d of Array.from(doc.querySelectorAll(".def"))) {
       const t = clean(d.textContent);
       if (t) defs.push({ pos: posGlobal || undefined, meaning: t });

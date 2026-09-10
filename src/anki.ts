@@ -182,7 +182,7 @@ async function storeAudio(s: Pick2ankiSettings, input: CardInput): Promise<{ fil
     usedUrl = "edge-tts";
   }
   if (!bytes) return null;
-  const fileName = `kfy-${sanitizeName(word).slice(0, 24)}-${md5(word + "|" + usedUrl).slice(0, 8)}.mp3`;
+  const fileName = `p2a-${sanitizeName(word).slice(0, 24)}-${md5(word + "|" + usedUrl).slice(0, 8)}.mp3`;
   try {
     await ankiInvoke("storeMediaFile", { filename: fileName, data: bufToBase64(bytes) }, s.ankiConnectUrl);
     return { fileName, audioRef: `[sound:${fileName}]` };

@@ -1,10 +1,10 @@
 // ============ 适配器：有道词典（柯林斯英汉双解官方授权 + 双语例句） ============
 // 解析规则（固定）：
 //   主源   collins_primary：gramcat[].{partofspeech, pronunciation, audiourl, senses[]}
-//           senses[].{definition=英文, word=中文, examples[].{example, sense.word=例句中文}}
+//               senses[].{definition=英文, word=中文, examples[].{example, sense.word=例句中文}}
 //   补充   blng_sents_part.sentence-pair[]（sentence / sentence-translation）
-//   兜底   collins_primary 缺失/为空 → simple(音标) + ec / expand_ec(释义)
-// 输出    统一 DictResult（无 definitions 时返回 null 走兜底）
+//              collins_primary 缺失/为空 → simple(音标) + ec / expand_ec(释义)
+// 输出    统一 DictResult（无 definitions 时返回 null ）
 import type { DictAdapter, DictDefinition, DictResult } from "./dict-types";
 import { ONLINE_DICT_NAMES } from "./settings";
 import { asArray, asDict, asStr, clean, fetchText, friendlyPos, joinPhonetic, phonText, stripHtml, strOf } from "./dict-utils";
@@ -113,7 +113,7 @@ function makeAdapter(): DictAdapter {
     }
     if (cpForms.size) extras.push("词形：" + Array.from(cpForms).slice(0, 8).join("；"));
 
-    // ---- 2) 音标与音频：柯林斯优先，simple 兜底 ----
+    // ---- 2) 音标与音频：柯林斯优先，simple补充 ----
     const usPhone = clean(simp.usphone);
     const ukPhone = clean(simp.ukphone) || clean(ec.phonetic);
     let phonetic: string | undefined;
@@ -132,14 +132,14 @@ function makeAdapter(): DictAdapter {
         audio = uk ? dictvoice(1) : us ? dictvoice(2) : undefined;
       }
     }
-    // ec 音标兜底
+    // ec 音标
     if (!phonetic) {
       const uk2 = clean(w0.ukphone) || clean(ec.phonetic);
       const us2 = clean(w0.usphone);
       phonetic = joinPhonetic(uk2, us2);
     }
 
-    // ---- 3) 释义兜底：collins 无释义 → expand_ec / ec.trs ----
+    // ---- 3) 释义：collins 无释义 → expand_ec / ec.trs ----
     if (defs.length === 0) {
       const exp = asDict(root.expand_ec);
       const groups = asArray(exp.word);
@@ -177,7 +177,7 @@ function makeAdapter(): DictAdapter {
           }
         }
       } else {
-        // 粗解析兜底：ec.word[0].trs 结构 [{tr:[{l:{i:[“n. 单词；话语…”]}}]}]
+        // 粗解析：ec.word[0].trs 结构 [{tr:[{l:{i:[“n. 单词；话语…”]}}]}]
         for (const rawItem of asArray(w0.trs)) {
           const item = asDict(rawItem);
           for (const rawTr of asArray(item.tr)) {
@@ -222,7 +222,7 @@ function makeAdapter(): DictAdapter {
       addExtraEx(sp["sentence-eng"] ?? sp.sentence ?? sp.sentenceEng, sp["sentence-translation"] ?? sp.sentenceTrans);
     }
 
-    if (defs.length === 0) return null; // 无释义不产出，走兜底/其它源
+    if (defs.length === 0) return null; // 无释义不产出，走其它源
     const result: DictResult = {
       word,
       phonetic: phonetic || undefined,

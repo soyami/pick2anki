@@ -40,7 +40,7 @@ export const ANKI_SOURCE_LABELS: Record<AnkiFieldSource, string> = {
   source: "来源地址",
 };
 
-/** 每个内容源在设置里的输入占位提示（用户按其模板习惯自填字段名） */
+/** 每个内容源在设置里的输入占位提示（根据模板习惯自填字段名） */
 export const ANKI_SOURCE_PLACEHOLDERS: Record<AnkiFieldSource, string> = {
   word: "如 Word / 单词",
   context: "如 Sentence / 原句",

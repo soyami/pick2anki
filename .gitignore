@@ -1,0 +1,15 @@
+# Node / build
+node_modules/
+.npm-cache/
+dist/
+
+# Logs & temp
+*.log
+.DS_Store
+
+# Obsidian plugin local artifacts
+*.code-workspace
+
+# 开发文档
+DEV_HANDOFF.md
+*HANDOFF.md

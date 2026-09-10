@@ -1,6 +1,6 @@
-/* ======== 快翻译弹窗（对齐 Obsidian 原生 Popover 风格） ======== */
+/* ======== Pick2anki 查词弹窗（对齐 Obsidian 原生 Popover 风格） ======== */
 
-.kfy-popup {
+.p2a-popup {
   z-index: var(--layer-popover, 20);
   position: absolute;
   background: var(--background-primary);
@@ -18,15 +18,15 @@
   color: var(--text-normal);
 }
 
-.kfy-section {
+.p2a-section {
   margin-bottom: var(--size-4-3);
 }
-.kfy-section:last-child {
+.p2a-section:last-child {
   margin-bottom: 0;
 }
 
 /* 标签：对齐 Obsidian setting-item-description 的小号弱化文字 */
-.kfy-label {
+.p2a-label {
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-medium);
   color: var(--text-muted);
@@ -35,25 +35,25 @@
 }
 
 /* 标签行 */
-.kfy-section-hdr {
+.p2a-section-hdr {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--size-4-1);
 }
-.kfy-section-hdr .kfy-label {
+.p2a-section-hdr .p2a-label {
   margin-bottom: 0;
 }
 
-.kfy-drag-handle {
+.p2a-drag-handle {
   cursor: grab;
 }
-.kfy-drag-handle:active {
+.p2a-drag-handle:active {
   cursor: grabbing;
 }
 
 /* 内容块：词典释义展示，超长限高滚动避免弹窗抖动 */
-.kfy-text {
+.p2a-text {
   font-size: var(--font-ui-small);
   line-height: var(--line-height-normal);
   color: var(--text-normal);
@@ -71,7 +71,7 @@
 }
 
 /* 按钮行 */
-.kfy-btn-row {
+.p2a-btn-row {
   display: flex;
   gap: var(--size-4-2);
   justify-content: flex-end;
@@ -79,7 +79,7 @@
   align-items: center;
 }
 
-.kfy-btn-row button {
+.p2a-btn-row button {
   padding: var(--size-4-1) var(--size-4-3);
   border: none;
   border-radius: var(--radius-s);
@@ -92,44 +92,44 @@
   transition: background-color 0.15s ease;
 }
 
-.kfy-btn-row button:hover {
+.p2a-btn-row button:hover {
   background: var(--interactive-hover);
 }
 
-.kfy-btn-row button:active {
+.p2a-btn-row button:active {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
 }
 
 /* Anki 写卡按钮：主题色弱化强调 */
-.kfy-btn-row button.kfy-anki {
+.p2a-btn-row button.p2a-anki {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
 }
-.kfy-btn-row button.kfy-anki:hover {
+.p2a-btn-row button.p2a-anki:hover {
   filter: brightness(1.08);
 }
 
 /* 写卡后的动态状态：成功 ✔ / 已存在 ↺ / 失败或进行中 ➕(禁用) */
-.kfy-btn-row button.kfy-anki.kfy-anki-ok {
+.p2a-btn-row button.p2a-anki.p2a-anki-ok {
   background: var(--color-green, #2e9e5b);
   color: #fff;
 }
-.kfy-btn-row button.kfy-anki.kfy-anki-dup {
+.p2a-btn-row button.p2a-anki.p2a-anki-dup {
   background: var(--color-orange, #d99000);
   color: #fff;
 }
-.kfy-btn-row button.kfy-anki.kfy-anki-err {
+.p2a-btn-row button.p2a-anki.p2a-anki-err {
   background: var(--interactive-normal);
   color: var(--text-normal);
 }
-.kfy-btn-row button.kfy-anki[disabled] {
+.p2a-btn-row button.p2a-anki[disabled] {
   opacity: 0.6;
   cursor: progress;
 }
 
 /* ======== 词典源拖动排序列表（设置页） ======== */
-.kfy-src-list {
+.p2a-src-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -140,7 +140,7 @@
   background: var(--background-secondary);
 }
 
-.kfy-src-row {
+.p2a-src-row {
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
@@ -151,40 +151,40 @@
   user-select: none;
 }
 
-.kfy-src-grip {
+.p2a-src-grip {
   color: var(--text-faint);
   font-size: 16px;
   line-height: 1;
 }
 
-.kfy-src-name {
+.p2a-src-name {
   flex: 1;
   font-size: var(--font-ui-small);
   color: var(--text-normal);
 }
 
-.kfy-src-row.kfy-src-dragging {
+.p2a-src-row.p2a-src-dragging {
   opacity: 0.5;
   border-style: dashed;
 }
 
-.kfy-src-row.kfy-src-drag-over {
+.p2a-src-row.p2a-src-drag-over {
   border-color: var(--interactive-accent);
   background: var(--background-modifier-hover);
 }
 
 /* ======== 词典释义卡片（参照 demo.css 柯林斯卡片样板） ======== */
-.kfy-text b {
+.p2a-text b {
   font-weight: 700;
 }
 
-.kfy-dict-src + .kfy-dict-src {
+.p2a-dict-src + .p2a-dict-src {
   border-top: 1px solid var(--background-modifier-border);
   margin-top: 8px;
   padding-top: 6px;
 }
 
-.kfy-dict-head {
+.p2a-dict-head {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
@@ -192,32 +192,32 @@
   margin-bottom: 2px;
 }
 
-.kfy-src-badge {
+.p2a-src-badge {
   font-weight: 600;
   font-size: var(--font-ui-smaller);
   color: var(--text-accent);
 }
 
-.kfy-src-url {
+.p2a-src-url {
   font-size: var(--font-ui-smaller);
   color: var(--text-faint);
   word-break: break-all;
 }
 
-.kfy-phon {
+.p2a-phon {
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
   margin: 2px 0 6px;
 }
 
-.kfy-def {
+.p2a-def {
   display: block;
   margin: 4px 0;
   line-height: 1.55;
 }
 
 /* 词性：蓝色小徽章（小写英文标签，如 noun / adj.） */
-.kfy-pos {
+.p2a-pos {
   display: inline-block;
   text-transform: lowercase;
   font-size: 0.9em;
@@ -229,16 +229,16 @@
   vertical-align: baseline;
 }
 
-.kfy-eng-tran {
+.p2a-eng-tran {
   margin-right: 4px;
 }
 
-.kfy-chn-tran {
+.p2a-chn-tran {
   color: #0d47a1;
 }
 
 /* 例句：浅蓝底方块列表，紧跟对应释义 */
-.kfy-sents {
+.p2a-sents {
   list-style: square inside;
   font-size: 0.9em;
   margin: 4px 0 6px;
@@ -247,26 +247,26 @@
   border-radius: 5px;
 }
 
-.kfy-sent {
+.p2a-sent {
   margin: 2px 0;
   padding: 0;
 }
 
-.kfy-eng-sent {
+.p2a-eng-sent {
   margin-right: 4px;
 }
 
-.kfy-chn-sent {
+.p2a-chn-sent {
   color: #0d47a1;
 }
 
-.kfy-more {
+.p2a-more {
   color: var(--text-faint);
   font-size: var(--font-ui-smaller);
   margin-top: 4px;
 }
 
-.kfy-extra {
+.p2a-extra {
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
   margin-top: 2px;

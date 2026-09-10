@@ -23,7 +23,7 @@ const ANKI_SOURCE_DESC: Record<AnkiFieldSource, string> = {
   def_all: "启用词典的完整释义列表，每条释义均内嵌它自己的例句",
   examples: "例句已内嵌在释义下方，通常无需单独映射；若想单独汇总一栏例句可在此选择字段",
   extra: "词形变化 / 常用搭配 / 考试范围标签",
-  audio: "自动获取发音并导入 Anki 媒体库（词典发音优先，Edge 兜底）",
+  audio: "自动获取发音并导入 Anki 媒体库（词典发音优先，Edge 补充）",
   source: "各词典的网页链接 + 当前笔记的 obsidian 链接",
 };
 
@@ -68,7 +68,7 @@ export default class Pick2ankiPlugin extends Plugin {
     });
 
     this.registerDomEvent(document, "mousedown", (evt: MouseEvent) => {
-      if (this.popup && !(evt.target as HTMLElement).closest(".kfy-popup")) this.hidePopup();
+      if (this.popup && !(evt.target as HTMLElement).closest(".p2a-popup")) this.hidePopup();
     });
 
     this.addCommand({
@@ -194,23 +194,23 @@ export default class Pick2ankiPlugin extends Plugin {
     this.removePopupDom();
     ++this.streamSeq; // 中止旧查询渲染
 
-    this.popup = this.app.workspace.containerEl.createDiv("kfy-popup");
+    this.popup = this.app.workspace.containerEl.createDiv("p2a-popup");
     const pos = this.computePosition(range);
     this.popup.style.top = `${pos.top}px`;
     this.popup.style.left = `${pos.left}px`;
     this.startFollow();
 
-    const d = this.popup.createDiv("kfy-section");
-    const hdr = d.createDiv("kfy-section-hdr");
-    const label = hdr.createDiv("kfy-label");
+    const d = this.popup.createDiv("p2a-section");
+    const hdr = d.createDiv("p2a-section-hdr");
+    const label = hdr.createDiv("p2a-label");
     label.textContent = "📖 在线词典";
     this.makeDraggable(label);
-    this.dictEl = d.createDiv("kfy-text");
+    this.dictEl = d.createDiv("p2a-text");
     this.dictEl.textContent = "查询中…";
 
     if (this.settings.ankiEnabled) {
-      const btnRow = this.popup.createDiv("kfy-btn-row");
-      const b = btnRow.createEl("button", { text: "➕ Anki", cls: "kfy-anki" });
+      const btnRow = this.popup.createDiv("p2a-btn-row");
+      const b = btnRow.createEl("button", { text: "➕ Anki", cls: "p2a-anki" });
       this.ankiBtn = b;
       b.onclick = () => { void this.addSelectionToAnki(this.lastCardWord || ""); };
     }
@@ -280,7 +280,7 @@ export default class Pick2ankiPlugin extends Plugin {
   }
 
   private makeDraggable(handle: HTMLElement): void {
-    handle.addClass("kfy-drag-handle");
+    handle.addClass("p2a-drag-handle");
     const onDown = (e: MouseEvent) => {
       if (!this.popup) return;
       this.popupMoved = true;
@@ -356,29 +356,29 @@ export default class Pick2ankiPlugin extends Plugin {
   /** 弹窗 Anki 按钮状态：busy=… / ok=✔ / dup=↺ / err 及 idle 回 ➕ */
   private setAnkiButton(state: "busy" | "ok" | "dup" | "err"): void {
     if (!this.ankiBtn) return;
-    this.ankiBtn.removeClass("kfy-anki-ok");
-    this.ankiBtn.removeClass("kfy-anki-dup");
-    this.ankiBtn.removeClass("kfy-anki-err");
+    this.ankiBtn.removeClass("p2a-anki-ok");
+    this.ankiBtn.removeClass("p2a-anki-dup");
+    this.ankiBtn.removeClass("p2a-anki-err");
     if (state === "busy") {
       this.ankiBtn.textContent = "⏳ Anki…";
-      this.ankiBtn.addClass("kfy-anki-err");
+      this.ankiBtn.addClass("p2a-anki-err");
       (this.ankiBtn as HTMLButtonElement).disabled = true;
     } else {
       (this.ankiBtn as HTMLButtonElement).disabled = false;
       if (state === "ok") {
         this.ankiBtn.textContent = "✔ Anki";
-        this.ankiBtn.addClass("kfy-anki-ok");
+        this.ankiBtn.addClass("p2a-anki-ok");
       } else if (state === "dup") {
         this.ankiBtn.textContent = "↺ 已有";
-        this.ankiBtn.addClass("kfy-anki-dup");
+        this.ankiBtn.addClass("p2a-anki-dup");
       } else {
         this.ankiBtn.textContent = "➕ Anki";
-        this.ankiBtn.addClass("kfy-anki-err");
+        this.ankiBtn.addClass("p2a-anki-err");
       }
     }
   }
 
-  // ---- 设置持久化（顺带清理旧版遗留字段） ----
+  // ---- 设置持久化 ----
   async loadSettings(): Promise<void> {
     const stored = (await this.loadData()) as Partial<Pick2ankiSettings> | null;
     this.settings = { ...DEFAULT_SETTINGS, ...(stored ?? {}) };
@@ -386,7 +386,7 @@ export default class Pick2ankiPlugin extends Plugin {
       this.settings.onlineDictSources = [...DEFAULT_SETTINGS.onlineDictSources];
     }
     let dirty = false;
-    // 迁移：旧版映射是“模板字段名 → 内容源”，新版为“内容源 → 模板字段名”，做一次反转迁移
+    // 内容源 → 模板字段名
     const rawMap = this.settings.ankiFieldMap as unknown;
     if (rawMap && typeof rawMap === "object" && !Array.isArray(rawMap)) {
       const entries = Object.entries(rawMap as Record<string, unknown>);
@@ -472,18 +472,18 @@ class Pick2ankiSettingTab extends PluginSettingTab {
 
     // ---- 在线词典 ----
     new Setting(containerEl).setHeading().setName("📖 在线词典查词");
-    new Setting(containerEl).setName("说明").setDesc("划选英文单词/短语即弹出多源词典释义（本插件不再使用 AI/API 长句翻译）。"
+    new Setting(containerEl).setName("说明").setDesc("划选英文单词/短语即弹出多源词典释义。"
       + "部分官网受反爬影响失败时会自动跳过该源；弹窗只完整展示“排序最前且可用”的两个源的释义");
     const activeList: OnlineDictSource[] = [...(p.settings.onlineDictSources || [])];
     const disabledList = ONLINE_DICT_SOURCES.filter((s) => !activeList.includes(s));
     new Setting(containerEl).setName("顺序与启用").setDesc("直接拖动整行调整顺序（越靠上越优先，单一/全部释义与发音按此合并）；行尾开关可停用该源");
-    const dragList = containerEl.createDiv({ cls: "kfy-src-list" });
+    const dragList = containerEl.createDiv({ cls: "p2a-src-list" });
     let dragSrcId: string | null = null;
     for (const src of activeList) {
-      const row = dragList.createDiv({ cls: "kfy-src-row", attr: { draggable: "true" } });
+      const row = dragList.createDiv({ cls: "p2a-src-row", attr: { draggable: "true" } });
       row.dataset.src = src;
-      row.createSpan({ cls: "kfy-src-grip", text: "⠿" });
-      row.createSpan({ cls: "kfy-src-name", text: ONLINE_DICT_NAMES[src] });
+      row.createSpan({ cls: "p2a-src-grip", text: "⠿" });
+      row.createSpan({ cls: "p2a-src-name", text: ONLINE_DICT_NAMES[src] });
       // Obsidian 原生风格开关
       const label = row.createEl("label", { cls: "checkbox-container is-enabled" });
       const input = label.createEl("input", { attr: { type: "checkbox", checked: "" } });
@@ -495,24 +495,24 @@ class Pick2ankiSettingTab extends PluginSettingTab {
       row.addEventListener("dragstart", (e) => {
         dragSrcId = src;
         if (e.dataTransfer) { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", src); }
-        row.addClass("kfy-src-dragging");
+        row.addClass("p2a-src-dragging");
       });
       row.addEventListener("dragend", () => {
         dragSrcId = null;
-        row.removeClass("kfy-src-dragging");
-        for (const el of Array.from(dragList.querySelectorAll(".kfy-src-row"))) (el as HTMLElement).removeClass("kfy-src-drag-over");
+        row.removeClass("p2a-src-dragging");
+        for (const el of Array.from(dragList.querySelectorAll(".p2a-src-row"))) (el as HTMLElement).removeClass("p2a-src-drag-over");
       });
       row.addEventListener("dragover", (e) => {
         if (!dragSrcId || dragSrcId === (row.dataset.src || "")) return;
         e.preventDefault();
-        row.addClass("kfy-src-drag-over");
+        row.addClass("p2a-src-drag-over");
       });
-      row.addEventListener("dragleave", () => row.removeClass("kfy-src-drag-over"));
+      row.addEventListener("dragleave", () => row.removeClass("p2a-src-drag-over"));
       row.addEventListener("drop", (e) => {
         e.preventDefault();
         const fromId = dragSrcId;
         const toId = row.dataset.src || "";
-        row.removeClass("kfy-src-drag-over");
+        row.removeClass("p2a-src-drag-over");
         if (!fromId || fromId === toId) return;
         const list = [...(p.settings.onlineDictSources || [])];
         const fi = list.indexOf(fromId as OnlineDictSource);

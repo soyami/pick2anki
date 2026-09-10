@@ -27,35 +27,35 @@ function fillHighlighted(parent: HTMLElement, text: string, word: string): void 
 }
 
 function addSentenceList(wrap: HTMLElement, sentences: Array<{ en?: string; zh?: string }>, word: string): void {
-  const ul = wrap.createEl("ul", { cls: "kfy-sents" });
+  const ul = wrap.createEl("ul", { cls: "p2a-sents" });
   for (const s of sentences) {
-    const li = ul.createEl("li", { cls: "kfy-sent" });
+    const li = ul.createEl("li", { cls: "p2a-sent" });
     if (s.en) {
-      const en = li.createSpan({ cls: "kfy-eng-sent" });
+      const en = li.createSpan({ cls: "p2a-eng-sent" });
       fillHighlighted(en, s.en, word);
     }
-    if (s.zh) li.createSpan({ cls: "kfy-chn-sent", text: s.zh });
+    if (s.zh) li.createSpan({ cls: "p2a-chn-sent", text: s.zh });
   }
 }
 
 function renderDefinition(container: HTMLElement, def: DictDefinition, word: string): void {
-  const row = container.createDiv({ cls: "kfy-def" });
-  if (def.pos) row.createSpan({ cls: "kfy-pos", text: posPretty(def.pos).toLowerCase() });
-  const tran = row.createSpan({ cls: "kfy-tran" });
+  const row = container.createDiv({ cls: "p2a-def" });
+  if (def.pos) row.createSpan({ cls: "p2a-pos", text: posPretty(def.pos).toLowerCase() });
+  const tran = row.createSpan({ cls: "p2a-tran" });
   // 英汉双解/英英：meaning 为英文 → eng_tran；纯中文源（meaning 即中文）→ chn_tran
   const zh = def.zh || "";
   const meaning = def.meaning || "";
   if (zh) {
     if (meaning && !hasCjk(meaning)) {
-      const eng = tran.createSpan({ cls: "kfy-eng-tran" });
+      const eng = tran.createSpan({ cls: "p2a-eng-tran" });
       fillHighlighted(eng, meaning, word);
     } else if (meaning) {
       // 中英混排释义（如有道聚合长串）：整段按中文色展示
-      tran.createSpan({ cls: "kfy-chn-tran", text: meaning });
+      tran.createSpan({ cls: "p2a-chn-tran", text: meaning });
     }
-    tran.createSpan({ cls: "kfy-chn-tran", text: zh });
+    tran.createSpan({ cls: "p2a-chn-tran", text: zh });
   } else if (meaning) {
-    const eng = tran.createSpan({ cls: "kfy-eng-tran" });
+    const eng = tran.createSpan({ cls: "p2a-eng-tran" });
     fillHighlighted(eng, meaning, word);
   }
   // 例句紧跟对应释义
@@ -74,12 +74,12 @@ export function renderBundleInto(container: HTMLElement, bundle: DictLookupBundl
   }
   for (const src of shown) {
     const r = src.result as DictResult;
-    const section = container.createDiv({ cls: "kfy-dict-src" });
+    const section = container.createDiv({ cls: "p2a-dict-src" });
 
-    const head = section.createDiv({ cls: "kfy-dict-head" });
-    head.createSpan({ cls: "kfy-src-badge", text: src.name });
-    if (src.url) head.createSpan({ cls: "kfy-src-url", text: src.url });
-    if (r.phonetic) section.createDiv({ cls: "kfy-phon", text: `音标 ${r.phonetic}` });
+    const head = section.createDiv({ cls: "p2a-dict-head" });
+    head.createSpan({ cls: "p2a-src-badge", text: src.name });
+    if (src.url) head.createSpan({ cls: "p2a-src-url", text: src.url });
+    if (r.phonetic) section.createDiv({ cls: "p2a-phon", text: `音标 ${r.phonetic}` });
 
     // 释义：例句已跟随各自释义
     for (const def of r.definitions) renderDefinition(section, def, r.word);
@@ -89,15 +89,15 @@ export function renderBundleInto(container: HTMLElement, bundle: DictLookupBundl
     r.definitions.forEach((d) => { if (d.example) used.add(d.example.trim().toLowerCase()); });
     const rest = (r.examples || []).filter((ex) => !ex.en || !used.has(ex.en.trim().toLowerCase()));
     if (rest.length) {
-      const label = section.createDiv({ cls: "kfy-more", text: "更多例句" });
+      const label = section.createDiv({ cls: "p2a-more", text: "更多例句" });
       addSentenceList(label.parentElement ?? section, rest, r.word);
     }
     // 附加信息（词形/搭配等）
-    for (const extra of (r.extras || []).slice(0, 3)) section.createDiv({ cls: "kfy-extra", text: extra });
+    for (const extra of (r.extras || []).slice(0, 3)) section.createDiv({ cls: "p2a-extra", text: extra });
   }
   const hidden = okSources.length - shown.length;
   if (hidden > 0) {
     const names = okSources.slice(shown.length).map((s) => s.name);
-    container.createDiv({ cls: "kfy-more", text: `…（另有 ${names.join("、")} 收录该词，弹窗未展开）` });
+    container.createDiv({ cls: "p2a-more", text: `…（另有 ${names.join("、")} 收录该词，弹窗未展开）` });
   }
 }
